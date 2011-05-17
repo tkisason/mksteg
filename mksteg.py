@@ -21,11 +21,15 @@ def entropy(data):
             Hd += - pi * math.log(pi, 2)
     return Hd
 
+def split_n(string,length):
+    import math
+    return [string[i*length:(i+1)*length] for i in range(int(math.ceil(int(len(string))) / length))]
+
 def to_hex(input):
     return ''.join(['%02x' % ord(x) for x in input])
 
 def to_chr(input):
-    return ''.join(['%02s' % chr(int(x,16)) for x in split_n(input,2)])
+    return (['%s' % chr(int(x,16)) for x in split_n(input,2)])
 
 def rfile(filename):
     return open(filename,"r").read()
@@ -91,6 +95,16 @@ def encode_data(cfx,dfx,data):
     dmap = ''.join(map[1])
     print "[+] dmap: ", to_hex(dmap)
     return trn(data,dmap,cmap)
+
+#def encode_file(carrier,data,output):
+    
+
+def decode_data(cmap,dmap,message):
+    map0 = ''.join(to_chr(cmap))
+    map1 = ''.join(to_chr(dmap))
+    return trn(message,map0,map1)
+
+
     
 if __name__ == '__main__':
     if len(argv) != 4:
@@ -108,5 +122,6 @@ if __name__ == '__main__':
         out = encode_data(cfx,dfx,data)
         if out != 0:
             output.write(out)
+            output.close()
             print "[+] message written to OUTFILE"
    
