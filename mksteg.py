@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from sys import argv
 
+cfx = {} # carrier frequency
+dfx = {} # data frequency
+
 def freq_an(input,fxp):
     if len (fxp) == 0:
         fx = {}
@@ -96,9 +99,20 @@ def encode_data(cfx,dfx,data):
     print "[+] dmap: ", to_hex(dmap)
     return trn(data,dmap,cmap)
 
-#def encode_file(carrier,data,output):
-    
-
+def encode_file(carrier,data,output,cfx,dfx):
+    carrier = open(carrier,"r").read()
+    data = open(data,"r").read()
+    output = open(output,"w")
+    cfx = freq_an(carrier,cfx)
+    dfx = freq_an(data,dfx)
+    out = encode_data(cfx,dfx,data)
+    if out != 0:
+        output.write(out)
+        output.close()
+        print "[+] message written to OUTFILE"
+    else:
+        return 0
+ 
 def decode_data(cmap,dmap,message):
     map0 = ''.join(to_chr(cmap))
     map1 = ''.join(to_chr(dmap))
@@ -112,16 +126,4 @@ if __name__ == '__main__':
         print "[+] current method: simple probability mapping"
         quit
     else:
-        cfx = {} # carrier frequency
-        dfx = {} # data frequency
-        carrier = open(argv[1],"r").read()
-        data = open(argv[2],"r").read()
-        output = open(argv[3],"w")
-        cfx = freq_an(carrier,cfx)
-        dfx = freq_an(data,dfx)
-        out = encode_data(cfx,dfx,data)
-        if out != 0:
-            output.write(out)
-            output.close()
-            print "[+] message written to OUTFILE"
-   
+        encode_file(argv[1],argv[2],argv[3],cfx,dfx)
